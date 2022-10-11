@@ -450,6 +450,9 @@ result back on the stack.
 
    Implements ``TOS = ~TOS``.
 
+.. opcode:: UNARY_INCREMENT
+
+   Implements ``TOS = TOS + 1``.
 
 .. opcode:: GET_ITER
 

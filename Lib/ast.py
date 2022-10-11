@@ -1329,8 +1329,6 @@ class _Unparser(NodeVisitor):
                 self.write("**")
                 self.set_precedence(_Precedence.EXPR, v)
                 self.traverse(v)
-            else:
-                write_key_value_pair(k, v)
 
         with self.delimit("{", "}"):
             self.interleave(
@@ -1345,12 +1343,13 @@ class _Unparser(NodeVisitor):
         ):
             self.items_view(self.traverse, node.elts)
 
-    unop = {"Invert": "~", "Not": "not", "UAdd": "+", "USub": "-"}
+    unop = {"Invert": "~", "Not": "not", "UAdd": "+", "USub": "-", "Incr": "++"} # changed
     unop_precedence = {
         "not": _Precedence.NOT,
         "~": _Precedence.FACTOR,
         "+": _Precedence.FACTOR,
         "-": _Precedence.FACTOR,
+        "++": _Precedence.FACTOR,
     }
 
     def visit_UnaryOp(self, node):

@@ -54,6 +54,10 @@ RARROW                  '->'
 ELLIPSIS                '...'
 COLONEQUAL              ':='
 
+# test
+INCREMENT               '++'
+# end test
+
 OP
 AWAIT
 ASYNC

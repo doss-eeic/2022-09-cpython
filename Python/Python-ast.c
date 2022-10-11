@@ -85,6 +85,8 @@ void _PyAST_Fini(PyInterpreterState *interp)
     Py_CLEAR(state->Import_type);
     Py_CLEAR(state->In_singleton);
     Py_CLEAR(state->In_type);
+    Py_CLEAR(state->Incr_singleton);
+    Py_CLEAR(state->Incr_type);
     Py_CLEAR(state->Interactive_type);
     Py_CLEAR(state->Invert_singleton);
     Py_CLEAR(state->Invert_type);
@@ -1601,7 +1603,7 @@ init_types(struct ast_state *state)
                                                   NULL);
     if (!state->FloorDiv_singleton) return 0;
     state->unaryop_type = make_type(state, "unaryop", state->AST_type, NULL, 0,
-        "unaryop = Invert | Not | UAdd | USub");
+        "unaryop = Invert | Not | UAdd | USub | Incr");
     if (!state->unaryop_type) return 0;
     if (!add_attributes(state, state->unaryop_type, NULL, 0)) return 0;
     state->Invert_type = make_type(state, "Invert", state->unaryop_type, NULL,
@@ -1630,6 +1632,12 @@ init_types(struct ast_state *state)
     state->USub_singleton = PyType_GenericNew((PyTypeObject *)state->USub_type,
                                               NULL, NULL);
     if (!state->USub_singleton) return 0;
+    state->Incr_type = make_type(state, "Incr", state->unaryop_type, NULL, 0,
+        "Incr");
+    if (!state->Incr_type) return 0;
+    state->Incr_singleton = PyType_GenericNew((PyTypeObject *)state->Incr_type,
+                                              NULL, NULL);
+    if (!state->Incr_singleton) return 0;
     state->cmpop_type = make_type(state, "cmpop", state->AST_type, NULL, 0,
         "cmpop = Eq | NotEq | Lt | LtE | Gt | GtE | Is | IsNot | In | NotIn");
     if (!state->cmpop_type) return 0;
@@ -4815,6 +4823,9 @@ PyObject* ast2obj_unaryop(struct ast_state *state, unaryop_ty o)
         case USub:
             Py_INCREF(state->USub_singleton);
             return state->USub_singleton;
+        case Incr:
+            Py_INCREF(state->Incr_singleton);
+            return state->Incr_singleton;
     }
     Py_UNREACHABLE();
 }
@@ -10114,6 +10125,14 @@ obj2ast_unaryop(struct ast_state *state, PyObject* obj, unaryop_ty* out,
         *out = USub;
         return 0;
     }
+    isinstance = PyObject_IsInstance(obj, state->Incr_type);
+    if (isinstance == -1) {
+        return 1;
+    }
+    if (isinstance) {
+        *out = Incr;
+        return 0;
+    }
 
     PyErr_Format(PyExc_TypeError, "expected some sort of unaryop, but got %R", obj);
     return 1;
@@ -12184,6 +12203,9 @@ astmodule_exec(PyObject *m)
         return -1;
     }
     if (PyModule_AddObjectRef(m, "USub", state->USub_type) < 0) {
+        return -1;
+    }
+    if (PyModule_AddObjectRef(m, "Incr", state->Incr_type) < 0) {
         return -1;
     }
     if (PyModule_AddObjectRef(m, "cmpop", state->cmpop_type) < 0) {

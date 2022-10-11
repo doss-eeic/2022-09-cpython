@@ -72,6 +72,8 @@ struct ast_state {
     PyObject *Import_type;
     PyObject *In_singleton;
     PyObject *In_type;
+    PyObject *Incr_singleton;
+    PyObject *Incr_type;
     PyObject *Interactive_type;
     PyObject *Invert_singleton;
     PyObject *Invert_type;

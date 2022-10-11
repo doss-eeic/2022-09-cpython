@@ -376,6 +376,7 @@ Expressions
            USub
            Not
            Invert
+           Incr
 
    Unary operator tokens. :class:`Not` is the ``not`` keyword, :class:`Invert`
    is the ``~`` operator.

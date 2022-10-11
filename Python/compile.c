@@ -1039,6 +1039,7 @@ stack_effect(int opcode, int oparg, int jump)
         /* Unary operators */
         case UNARY_POSITIVE:
         case UNARY_NEGATIVE:
+        case UNARY_INCREMENT:
         case UNARY_NOT:
         case UNARY_INVERT:
             return 0;
@@ -4064,6 +4065,8 @@ unaryop(unaryop_ty op)
         return UNARY_POSITIVE;
     case USub:
         return UNARY_NEGATIVE;
+    case Incr:
+        return UNARY_INCREMENT;
     default:
         PyErr_Format(PyExc_SystemError,
             "unary op %d should not be possible", op);
