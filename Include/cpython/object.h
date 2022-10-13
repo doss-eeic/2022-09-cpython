@@ -71,6 +71,7 @@ typedef struct {
     unaryfunc nb_absolute;
     inquiry nb_bool;
     unaryfunc nb_invert;
+    unaryfunc nb_increment;
     binaryfunc nb_lshift;
     binaryfunc nb_rshift;
     binaryfunc nb_and;

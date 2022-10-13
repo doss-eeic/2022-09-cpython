@@ -4743,6 +4743,22 @@ long_invert(PyLongObject *v)
 }
 
 static PyObject *
+long_increment(PyLongObject *v)
+{
+    /* Implement ~x as -(x+1) */
+    PyLongObject *x;
+    if (IS_MEDIUM_VALUE(v))
+        return _PyLong_FromSTwoDigits(~medium_value(v));
+    x = (PyLongObject *) long_add(v, (PyLongObject *)_PyLong_GetOne());
+    if (x == NULL)
+        return NULL;
+    _PyLong_Negate(&x);
+    /* No need for maybe_small_long here, since any small
+       longs will have been caught in the Py_SIZE <= 1 fast path. */
+    return (PyObject *)x;
+}
+
+static PyObject *
 long_neg(PyLongObject *v)
 {
     PyLongObject *z;
@@ -6095,6 +6111,7 @@ static PyNumberMethods long_as_number = {
     (unaryfunc)long_abs,        /*tp_absolute*/
     (inquiry)long_bool,         /*tp_bool*/
     (unaryfunc)long_invert,     /*nb_invert*/
+    (unaryfunc)long_increment,  /*nb_increment*/
     long_lshift,                /*nb_lshift*/
     long_rshift,                /*nb_rshift*/
     long_and,                   /*nb_and*/
