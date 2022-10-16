@@ -1337,6 +1337,16 @@ handle_eval_breaker:
             goto error;
         }
 
+        TARGET(UNARY_INCREMENT) {
+            PyObject *value = TOP();
+            PyObject *res = PyNumber_InPlaceAdd(value, _PyLong_GetOne());
+            // Py_DECREF(value);
+            SET_TOP(res);
+            if (res == NULL)
+                goto error;
+            DISPATCH();
+        }
+
         TARGET(UNARY_INVERT) {
             PyObject *value = TOP();
             PyObject *res = PyNumber_Invert(value);
