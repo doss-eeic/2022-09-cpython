@@ -212,13 +212,6 @@ _operator_invert(PyObject *module, PyObject *a)
     return PyNumber_Invert(a);
 }
 
-static PyObject *
-_operator_increment(PyObject *module, PyObject *a)
-/*[clinic end generated code: output=406b5aa030545fcc input=7f2d607176672e55]*/
-{
-    return PyNumber_Increment(a);
-}
-
 /*[clinic input]
 _operator.lshift = _operator.add
 
