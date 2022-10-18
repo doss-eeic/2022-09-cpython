@@ -1340,10 +1340,23 @@ handle_eval_breaker:
         TARGET(UNARY_INCREMENT) {
             PyObject *value = TOP();
             PyObject *res = PyNumber_InPlaceAdd(value, _PyLong_GetOne());
-            // Py_DECREF(value);
-            SET_TOP(res);
+            Py_DECREF(value);
+            SET_TOP(res);  // ここでSET_TOP(value)とするとインクリメントの結果として加算前のiを返すことができる
             if (res == NULL)
                 goto error;
+            // STORE
+            PyObject *name = GETITEM(names, oparg);
+            PyObject *ns = LOCALS();
+            int err;
+            if (ns == NULL) {
+                _PyErr_Format(tstate, PyExc_SystemError,
+                              "no locals found when storing %R", name);
+                goto error;
+            }
+            err = PyObject_SetItem(ns, name, res);
+            if (err != 0)
+                goto error;
+            // end STORE
             DISPATCH();
         }
 
