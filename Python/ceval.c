@@ -1363,7 +1363,6 @@ handle_eval_breaker:
         TARGET(UNARY_POSTINCREMENT) {
             PyObject *value = TOP();
             PyObject *res = PyNumber_Add(value, _PyLong_GetOne());
-            Py_DECREF(value);
             SET_TOP(value);
             if (res == NULL)
                 goto error;
