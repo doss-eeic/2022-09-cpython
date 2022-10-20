@@ -1337,7 +1337,7 @@ handle_eval_breaker:
             goto error;
         }
 
-        TARGET(UNARY_INCREMENT) {
+        TARGET(UNARY_PREINCREMENT) {
             PyObject *value = TOP();
             PyObject *res = PyNumber_Add(value, _PyLong_GetOne());
             Py_DECREF(value);
@@ -1351,6 +1351,29 @@ handle_eval_breaker:
             if (ns == NULL) {
                 _PyErr_Format(tstate, PyExc_SystemError,
                               "no locals found when storing %R", name);
+                goto error;
+            }
+            err = PyObject_SetItem(ns, name, res);
+            if (err != 0)
+                goto error;
+            // end STORE
+            DISPATCH();
+        }
+
+        TARGET(UNARY_POSTINCREMENT) {
+            PyObject *value = TOP();
+            PyObject *res = PyNumber_Add(value, _PyLong_GetOne());
+            Py_DECREF(value);
+            SET_TOP(value);
+            if (res == NULL)
+                goto error;
+            // STORE
+            PyObject *name = GETITEM(names, oparg);
+            PyObject *ns = LOCALS();
+            int err;
+            if (ns == NULL) {
+                _PyErr_Format(tstate, PyExc_SystemError,
+                                "no locals found when storing %R", name);
                 goto error;
             }
             err = PyObject_SetItem(ns, name, res);
