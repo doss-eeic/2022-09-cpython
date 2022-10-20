@@ -5,7 +5,6 @@
 #include "pycore_pystate.h"       // _PyThreadState_GET()
 #include "pycore_format.h"        // F_LJUST
 
-
 static int
 make_const(expr_ty node, PyObject *val, PyArena *arena)
 {
@@ -109,8 +108,15 @@ fold_unaryop(expr_ty node, PyArena *arena, _PyASTOptimizeState *state)
         [UAdd] = PyNumber_Positive,
         [USub] = PyNumber_Negative,
     };
-    PyObject *newval = ops[node->v.UnaryOp.op](arg->v.Constant.value);
-    return make_const(node, newval, arena);
+    if (node->v.UnaryOp.op == Incr) {
+        // error
+        PyErr_SetString(PyExc_TypeError, "invalid operand type for increment");
+        return 0;
+    }
+    else {
+        PyObject *newval = ops[node->v.UnaryOp.op](arg->v.Constant.value);
+        return make_const(node, newval, arena);
+    }
 }
 
 /* Check whether a collection doesn't containing too much items (including

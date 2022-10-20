@@ -1339,7 +1339,7 @@ handle_eval_breaker:
 
         TARGET(UNARY_INCREMENT) {
             PyObject *value = TOP();
-            PyObject *res = PyNumber_InPlaceAdd(value, _PyLong_GetOne());
+            PyObject *res = PyNumber_Add(value, _PyLong_GetOne());
             Py_DECREF(value);
             SET_TOP(res);  // ここでSET_TOP(value)とするとインクリメントの結果として加算前のiを返すことができる
             if (res == NULL)

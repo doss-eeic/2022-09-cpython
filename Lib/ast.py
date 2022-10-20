@@ -1343,7 +1343,7 @@ class _Unparser(NodeVisitor):
         ):
             self.items_view(self.traverse, node.elts)
 
-    unop = {"Invert": "~", "Not": "not", "UAdd": "+", "USub": "-", "Incr": "++"} # changed
+    unop = {"Invert": "~", "Not": "not", "UAdd": "+", "USub": "-", "Incr": "++"}
     unop_precedence = {
         "not": _Precedence.NOT,
         "~": _Precedence.FACTOR,
