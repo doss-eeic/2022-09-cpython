@@ -1341,44 +1341,19 @@ handle_eval_breaker:
             PyObject *value = TOP();
             PyObject *res = PyNumber_Add(value, _PyLong_GetOne());
             Py_DECREF(value);
-            SET_TOP(res);  // ここでSET_TOP(value)とするとインクリメントの結果として加算前のiを返すことができる
+            SET_TOP(res);
+            PUSH(res);
             if (res == NULL)
                 goto error;
-            // STORE
-            PyObject *name = GETITEM(names, oparg);
-            PyObject *ns = LOCALS();
-            int err;
-            if (ns == NULL) {
-                _PyErr_Format(tstate, PyExc_SystemError,
-                              "no locals found when storing %R", name);
-                goto error;
-            }
-            err = PyObject_SetItem(ns, name, res);
-            if (err != 0)
-                goto error;
-            // end STORE
             DISPATCH();
         }
 
         TARGET(UNARY_POSTINCREMENT) {
             PyObject *value = TOP();
             PyObject *res = PyNumber_Add(value, _PyLong_GetOne());
-            SET_TOP(value);
+            PUSH(res);
             if (res == NULL)
                 goto error;
-            // STORE
-            PyObject *name = GETITEM(names, oparg);
-            PyObject *ns = LOCALS();
-            int err;
-            if (ns == NULL) {
-                _PyErr_Format(tstate, PyExc_SystemError,
-                                "no locals found when storing %R", name);
-                goto error;
-            }
-            err = PyObject_SetItem(ns, name, res);
-            if (err != 0)
-                goto error;
-            // end STORE
             DISPATCH();
         }
 
