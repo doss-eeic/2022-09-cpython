@@ -5716,6 +5716,31 @@ compiler_visit_expr1(struct compiler *c, expr_ty e)
     case UnaryOp_kind:
         VISIT(c, expr, e->v.UnaryOp.operand);
         ADDOP(c, unaryop(e->v.UnaryOp.op));
+        if (e->v.UnaryOp.op == PreIncr || e->v.UnaryOp.op == PostIncr) {
+            // increment op
+            expr_ty operand = e->v.UnaryOp.operand;
+            if (e->v.UnaryOp.operand->kind == Name_kind) {
+                // store name
+                compiler_nameop(c, operand->v.Name.id, Store);
+            }
+            else if (e->v.UnaryOp.operand->kind == Subscript_kind) {
+                // store subscript
+                operand->v.Attribute.ctx = Store;
+                VISIT(c, expr, operand);
+            }
+            else if (e->v.UnaryOp.operand->kind == Attribute_kind) {
+                // store attribute
+                operand->v.Attribute.ctx = Store;
+                VISIT(c, expr, operand);
+            }
+            else {
+                // type error
+                PyErr_Format(PyExc_SystemError,
+                "invalid node type (%d) for increment",
+                e->kind);
+                return 0;
+            }
+        }
         break;
     case Lambda_kind:
         return compiler_lambda(c, e);

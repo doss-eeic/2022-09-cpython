@@ -765,8 +765,8 @@ factor[expr_ty] (memo):
     | '+' a=factor { _PyAST_UnaryOp(UAdd, a, EXTRA) }
     | '-' a=factor { _PyAST_UnaryOp(USub, a, EXTRA) }
     | '~' a=factor { _PyAST_UnaryOp(Invert, a, EXTRA) }
-    | '++' a=NAME { _PyAST_UnaryOp(PreIncr, a, EXTRA) }
-    | a=NAME '++' { _PyAST_UnaryOp(PostIncr, a, EXTRA) }
+    | '++' a=primary { _PyAST_UnaryOp(PreIncr, a, EXTRA) }
+    | a=primary '++' { _PyAST_UnaryOp(PostIncr, a, EXTRA) }
     | power
 
 power[expr_ty]:
