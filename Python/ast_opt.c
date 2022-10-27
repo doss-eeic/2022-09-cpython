@@ -108,7 +108,7 @@ fold_unaryop(expr_ty node, PyArena *arena, _PyASTOptimizeState *state)
         [UAdd] = PyNumber_Positive,
         [USub] = PyNumber_Negative,
     };
-    /*
+
     if (node->v.UnaryOp.op == PreIncr || node->v.UnaryOp.op == PostIncr) {
         // error
         PyErr_SetString(PyExc_TypeError, "invalid operand type for increment");
@@ -118,7 +118,7 @@ fold_unaryop(expr_ty node, PyArena *arena, _PyASTOptimizeState *state)
         PyObject *newval = ops[node->v.UnaryOp.op](arg->v.Constant.value);
         return make_const(node, newval, arena);
     }
-    */
+
     PyObject *newval = ops[node->v.UnaryOp.op](arg->v.Constant.value);
     return make_const(node, newval, arena);
 }
